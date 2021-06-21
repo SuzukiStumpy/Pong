@@ -23,7 +23,7 @@ class StateManager:
 
         # Store a reference to the enclosing 'game' object.  This allows us to
         # terminate the program execution should the state stack become empty.
-        self._game = game
+        self.game = game
 
         # State_stack is a list which contains the set of currently executing
         # states.  The state at the end of the list is the current active state
@@ -40,7 +40,7 @@ class StateManager:
         state to perform any required setup tasks before it kicks in"""
         self.state_stack.append(state)
         self.current_state = self.state_stack[-1]
-        self.current_state.startup(self._game)
+        self.current_state.startup()
 
     def pop(self):
         """Removes the currently executing state from the stack and, if there
@@ -49,12 +49,12 @@ class StateManager:
         the game"""
         # Perform any necessary cleanup functionality before terminating the
         # state
-        self.current_state.cleanup(self._game)
+        self.current_state.cleanup()
         self.state_stack.pop()
 
         # Terminate the game if we've popped the last item from the stack...
         if len(self.state_stack) == 0:
-            self._game.is_running = False
+            self.game.is_running = False
         else:
             self.current_state = self.state_stack[-1]
 
@@ -68,7 +68,7 @@ class StateManager:
                 # Do the import
                 module = importlib.import_module(this_state['file'])
                 class_ = getattr(module, this_state['name'])
-                state_defs[this_state['name']] = class_()
+                state_defs[this_state['name']] = class_(self.game)
             except ModuleNotFoundError:
                 # Raise an exception on error
                 print(f"The module "
@@ -76,7 +76,7 @@ class StateManager:
                 sys.exit(ModuleNotFoundError)
             except AttributeError:
                 # Raise an exception on error
-                print(f"The class {this_state['name']} cound not be found in "
+                print(f"The class {this_state['name']} could not be found in "
                       f"module {this_state['file'].py}.  Aborting.")
                 sys.exit(AttributeError)
 

@@ -20,21 +20,26 @@ class Game:
         """Perform the basic initialisation and set up the screen"""
         pygame.init()
 
-        # Define and initialise the state manager
-        self.state_manager = StateManager.StateManager(state_defs, self)
-
         # Define the screen dimensions and initialise the display
-        resolution = (w, h) = (1024, 768)
-        display_flags = pygame.FULLSCREEN | pygame.SCALED
+        self.resolution = (self.width, self.height) = (1024, 768)
+        #display_flags = pygame.FULLSCREEN | pygame.SCALED
+        display_flags = pygame.SCALED
 
-        self.display_surface = pygame.display.set_mode(
-            resolution,
+        #  Probably don't need this in the game object
+        #  itself.
+        #  self.display_surface = pygame.Surface(self.resolution)
+        self.display_window = pygame.display.set_mode(
+            self.resolution,
             display_flags)
 
         # Perform any global game specific setup here
         self.frames_per_second = 60
         self.dt = 1/self.frames_per_second
         self.is_running = True  # This is the terminator for the main loop
+
+        # Define and initialise the state manager (do this last so we have
+        # the game class otherwise all set up
+        self.state_manager = StateManager.StateManager(state_defs, self)
     # End method __init__
 
     def run(self):
@@ -54,17 +59,18 @@ class Game:
             # Run update loop
             while accumulator >= self.dt:
                 # Run the event pump
-                self.state_manager.current_state.handle_events(self)
+                self.state_manager.current_state.handle_events()
 
                 # Do update code
-                self.state_manager.current_state.update(self)
+                self.state_manager.current_state.update(t, self.dt)
 
                 accumulator -= self.dt
                 t += self.dt
             # End update loop
 
             # Do render
-            self.state_manager.current_state.display(self)
+            self.state_manager.current_state.display()
+            pygame.display.flip()
 
         # End main loop
     # End method run
@@ -73,7 +79,7 @@ class Game:
 
 if __name__ == '__main__':
     states = [
-        {"name": "State", "file": "State", "default": True},
+        {"name": "MainMenu", "file": "MainMenuState", "default": True},
     ]
     game = Game(states)
     game.run()
