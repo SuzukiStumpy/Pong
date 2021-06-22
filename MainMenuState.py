@@ -38,7 +38,7 @@ class MainMenu(State):
             ("Options", 60, (200, 200, 200),
                 lambda: print("Show options menu")),
             ("Credits", 85, (200, 200, 200),
-                lambda: print("Show credits")),
+                lambda: self.game.state_manager.push("Credits")),
             ("Quit", 125, (128, 128, 128),
                 lambda: pygame.event.post(pygame.event.Event(pygame.QUIT)))
         ]

@@ -32,13 +32,14 @@ class StateManager:
 
         # Load the states and bootstrap the state manager
         # States is stored as a dictionary so we can refer to states by name
-        self.states = self._load_states(states)
+        self.states = {}
+        self._load_states(states)
 
     def push(self, state):
         """Adds the specified state to the end of the state_stack list and
         updates the current_state instance variable.  Also causes the new
         state to perform any required setup tasks before it kicks in"""
-        self.state_stack.append(state)
+        self.state_stack.append(self.states[state])
         self.current_state = self.state_stack[-1]
         self.current_state.startup()
 
@@ -61,14 +62,12 @@ class StateManager:
     def _load_states(self, states):
         """Private method used to load the state matrix into the StateManager
         object from their individual modules"""
-        state_defs = {}
-
         for this_state in states:
             try:
                 # Do the import
                 module = importlib.import_module(this_state['file'])
                 class_ = getattr(module, this_state['name'])
-                state_defs[this_state['name']] = class_(self.game)
+                self.states[this_state['name']] = class_(self.game)
             except ModuleNotFoundError:
                 # Raise an exception on error
                 print(f"The module "
@@ -81,10 +80,8 @@ class StateManager:
                 sys.exit(AttributeError)
 
             if this_state['default'] is True:
-                self.push(state_defs[this_state['name']])
+                self.push(this_state['name'])
 
         # Now that we've imported all the states, invalidate the cache so
         # that Python can recognise the new code
         importlib.invalidate_caches()
-
-        return state_defs
