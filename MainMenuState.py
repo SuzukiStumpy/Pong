@@ -32,7 +32,7 @@ class MainMenu(State):
         # defining what we want to do when the menu item is selected.
         self.entries = [
             ("One Player", 0, (255, 255, 255),
-                lambda: print("Start game one player")),
+                lambda: self.game.state_manager.push("MainGame")),
             ("Two Player", 25, (255, 255, 255),
                 lambda: print("Start game two player")),
             ("Options", 60, (200, 200, 200),

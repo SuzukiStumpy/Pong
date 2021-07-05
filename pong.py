@@ -81,6 +81,7 @@ if __name__ == '__main__':
     states = [
         {"name": "MainMenu", "file": "MainMenuState", "default": True},
         {"name": "Credits", "file": "CreditsState", "default": False},
+        {"name": "MainGame", "file": "MainGameState", "default": False},
     ]
     game = Game(states)
     game.run()
