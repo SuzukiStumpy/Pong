@@ -46,6 +46,8 @@ class MainGame(State):
             # Check to see if the user has pressed a key, if so, set the
             # appropriate flags
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.game_is_running = False
                 if event.key == pygame.K_a:
                     self.p1_up = True
                 if event.key == pygame.K_z:
