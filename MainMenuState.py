@@ -60,6 +60,9 @@ class MainMenu(State):
             # Check to see if the user has pressed or released a key, if so,
             # set the appropriate flags
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.game_is_running = False
+                    pygame.event.post(pygame.event.Event(pygame.QUIT))
                 if event.key == pygame.K_DOWN:
                     self.down = True
                 if event.key == pygame.K_UP:
